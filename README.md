@@ -1,6 +1,6 @@
 # Bookstore API
 
-A REST API for managing books and customers, built with Spring Boot 3.
+A REST API for managing books and customers, built with Spring Boot 3 and PostgreSQL..
 
 ## Tech stack
 - Java, Spring Boot, Spring Data JPA
