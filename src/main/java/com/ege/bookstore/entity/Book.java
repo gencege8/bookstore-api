@@ -10,8 +10,10 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "Title is required")
+    @Column(nullable = false)
     private String title;
     @NotBlank(message = "Author is required")
+    @Column(nullable = false)
     private String author;
     @Positive(message = "Price must be greater than zero")
     private double price;
