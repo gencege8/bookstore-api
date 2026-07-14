@@ -2,6 +2,7 @@ package com.ege.bookstore.controller;
 
 import com.ege.bookstore.entity.Customer;
 import com.ege.bookstore.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class CustomerController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer registerCustomer(@RequestBody Customer customer){
+    public Customer registerCustomer(@Valid @RequestBody Customer customer){
         return service.registerCustomer(customer);
     }
     @DeleteMapping("/{id}")
