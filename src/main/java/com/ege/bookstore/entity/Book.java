@@ -3,6 +3,8 @@ package com.ege.bookstore.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -16,11 +18,11 @@ public class Book {
     @Column(nullable = false)
     private String author;
     @Positive(message = "Price must be greater than zero")
-    private double price;
+    private BigDecimal price;
 
     public Book(){}
 
-    public Book(String title, String author, double price){
+    public Book(String title, String author, BigDecimal price){
         this.title=title;
         this.price=price;
         this.author=author;
@@ -31,7 +33,7 @@ public class Book {
     public String getAuthor(){
         return this.author;
     }
-    public double getPrice(){
+    public BigDecimal getPrice(){
         return this.price;
     }
     public Long getId(){
@@ -43,7 +45,7 @@ public class Book {
     public void setAuthor(String author){
         this.author=author;
     }
-    public void setPrice(double price){
+    public void setPrice(BigDecimal price){
         this.price=price;
     }
 

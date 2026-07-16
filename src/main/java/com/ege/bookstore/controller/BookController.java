@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -49,4 +50,6 @@ public class BookController {
     public Book getByTitle(@RequestParam String title){
         return service.getBookByTitle(title);
     }
+    @GetMapping("/by-price-less-than")
+    public List<Book> getByPriceLessThan(@RequestParam BigDecimal price){return service.getBooksByPriceLessThan(price);}
 }

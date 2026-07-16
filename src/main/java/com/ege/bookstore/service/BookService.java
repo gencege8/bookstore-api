@@ -5,6 +5,7 @@ import com.ege.bookstore.exception.BookNotFoundException;
 import com.ege.bookstore.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -35,7 +36,9 @@ public class BookService {
         }
         repository.deleteById(id);
     }
-
+    public List<Book> getBooksByPriceLessThan(BigDecimal price){
+        return repository.findByPriceLessThan(price);
+    }
     public List<Book> getBooksByAuthor(String author) {
         return repository.findByAuthor(author);
     }
