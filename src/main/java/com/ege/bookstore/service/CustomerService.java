@@ -29,6 +29,16 @@ public class CustomerService {
         }
         return repository.save(customer);
     }
+    public Customer updateCustomer(Long id, Customer updated){
+        Customer existing = repository.findById(id).orElseThrow(()->new CustomerNotFoundException(id));
+        if(!existing.getUsername().equals(updated.getUsername()) && repository.existsByUsername(updated.getUsername())) {
+            throw new IllegalArgumentException("Username: '" + updated.getUsername() + "' is already taken");
+        }
+        existing.setName(updated.getName());
+        existing.setSurname(updated.getSurname());
+        existing.setUsername(updated.getUsername());
+        return repository.save(existing);
+    }
     public void deleteCustomerById(Long id){
         if(!repository.existsById(id)){
             throw new CustomerNotFoundException(id);
