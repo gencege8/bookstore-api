@@ -52,4 +52,8 @@ public class BookController {
     }
     @GetMapping("/by-price-less-than")
     public List<Book> getByPriceLessThan(@RequestParam BigDecimal price){return service.getBooksByPriceLessThan(price);}
+    @PutMapping("/{id}")
+    public Book updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
+        return service.updateBook(id, book);
+    }
 }
