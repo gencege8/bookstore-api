@@ -36,6 +36,14 @@ public class BookService {
         }
         repository.deleteById(id);
     }
+    public Book updateBook(Long id, Book updated) {
+        Book existing = repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));  // 1. fetch or 404
+        existing.setTitle(updated.getTitle());                      // 2. copy fields onto it
+        existing.setAuthor(updated.getAuthor());
+        existing.setPrice(updated.getPrice());
+        return repository.save(existing);                           // 3. save
+    }
     public List<Book> getBooksByPriceLessThan(BigDecimal price){
         return repository.findByPriceLessThan(price);
     }
