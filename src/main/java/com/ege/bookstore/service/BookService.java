@@ -1,5 +1,7 @@
 package com.ege.bookstore.service;
 
+import com.ege.bookstore.dto.BookRequest;
+import com.ege.bookstore.dto.BookResponse;
 import com.ege.bookstore.entity.Book;
 import com.ege.bookstore.exception.BookNotFoundException;
 import com.ege.bookstore.repository.BookRepository;
@@ -18,17 +20,19 @@ public class BookService {
         this.repository = repository;                  // generated implementation
     }
     @Transactional(readOnly = true)
-    public List<Book> getAllBooks() {
-        return repository.findAll();
+    public List<BookResponse> getAllBooks() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
     @Transactional(readOnly = true)
-    public Book getBookById(Long id) {
-        return repository.findById(id)
+    public BookResponse getBookById(Long id) {
+        Book book = repository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
+        return toResponse(book);
     }
     @Transactional
-    public Book createBook(Book book) {
-        return repository.save(book);   // save returns the saved entity, now WITH its id
+    public BookResponse createBook(BookRequest request) {
+        Book saved = repository.save(toEntity(request));   // save returns the saved entity, now WITH its id
+        return toResponse(saved);
     }
     @Transactional
     public void deleteBook(Long id) {
@@ -38,24 +42,33 @@ public class BookService {
         repository.deleteById(id);
     }
     @Transactional
-    public Book updateBook(Long id, Book updated) {
+    public BookResponse updateBook(Long id, BookRequest updated) {
         Book existing = repository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException(id));  // 1. fetch or 404
         existing.setTitle(updated.getTitle());                      // 2. copy fields onto it
         existing.setAuthor(updated.getAuthor());
         existing.setPrice(updated.getPrice());
-        return repository.save(existing);                           // 3. save
+        Book saved = repository.save(existing);                           // 3. save
+        return toResponse(saved);
     }
     @Transactional(readOnly = true)
-    public List<Book> getBooksByPriceLessThan(BigDecimal price){
-        return repository.findByPriceLessThan(price);
+    public List<BookResponse> getBooksByPriceLessThan(BigDecimal price){
+        return repository.findByPriceLessThan(price).stream().map(this::toResponse).toList();
     }
     @Transactional(readOnly = true)
-    public List<Book> getBooksByAuthor(String author) {
-        return repository.findByAuthor(author);
+    public List<BookResponse> getBooksByAuthor(String author) {
+        return repository.findByAuthor(author).stream().map(this::toResponse).toList();
     }
     @Transactional(readOnly = true)
-    public Book getBookByTitle(String title){
-        return repository.findByTitle(title).orElseThrow(()->new BookNotFoundException(title));
+    public BookResponse getBookByTitle(String title){
+        Book book = repository.findByTitle(title).orElseThrow(()->new BookNotFoundException(title));
+        return toResponse(book);
+    }
+    private Book toEntity(BookRequest request) {
+        return new Book(request.getTitle(), request.getAuthor(), request.getPrice());
+    }
+
+    private BookResponse toResponse(Book book) {
+        return new BookResponse(book.getId(), book.getTitle(), book.getAuthor(), book.getPrice());
     }
 }
