@@ -1,5 +1,7 @@
 package com.ege.bookstore.service;
 
+import com.ege.bookstore.dto.CustomerRequest;
+import com.ege.bookstore.dto.CustomerResponse;
 import com.ege.bookstore.entity.Customer;
 import com.ege.bookstore.exception.CustomerNotFoundException;
 import com.ege.bookstore.repository.CustomerRepository;
@@ -16,26 +18,29 @@ public class CustomerService {
         this.repository=repository;
     }
     @Transactional(readOnly = true)
-    public List<Customer> getAllCustomers(){
-        return repository.findAll();
+    public List<CustomerResponse> getAllCustomers(){
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
     @Transactional(readOnly = true)
-    public Customer getCustomerById(Long id){
-        return repository.findById(id).orElseThrow(()->new CustomerNotFoundException(id));
+    public CustomerResponse getCustomerById(Long id){
+        Customer customer=repository.findById(id).orElseThrow(()->new CustomerNotFoundException(id));
+        return toResponse(customer);
     }
     @Transactional(readOnly = true)
-    public Customer getCustomerByUsername(String username){
-        return repository.findByUsername(username).orElseThrow(()->new CustomerNotFoundException(username));
+    public CustomerResponse getCustomerByUsername(String username){
+        Customer customer = repository.findByUsername(username).orElseThrow(()->new CustomerNotFoundException(username));
+        return toResponse(customer);
     }
     @Transactional
-    public Customer registerCustomer(Customer customer){
+    public CustomerResponse registerCustomer(CustomerRequest customer){
         if(repository.existsByUsername(customer.getUsername())){
             throw new IllegalArgumentException("Username: '" + customer.getUsername() + "' is already taken");
         }
-        return repository.save(customer);
+        Customer registered = repository.save(toEntity(customer));
+        return toResponse(registered);
     }
     @Transactional
-    public Customer updateCustomer(Long id, Customer updated){
+    public CustomerResponse updateCustomer(Long id, CustomerRequest updated){
         Customer existing = repository.findById(id).orElseThrow(()->new CustomerNotFoundException(id));
         if(!existing.getUsername().equals(updated.getUsername()) && repository.existsByUsername(updated.getUsername())) {
             throw new IllegalArgumentException("Username: '" + updated.getUsername() + "' is already taken");
@@ -43,7 +48,8 @@ public class CustomerService {
         existing.setName(updated.getName());
         existing.setSurname(updated.getSurname());
         existing.setUsername(updated.getUsername());
-        return repository.save(existing);
+        Customer updatedNew = repository.save(existing);
+        return toResponse(updatedNew);
     }
     @Transactional
     public void deleteCustomerById(Long id){
@@ -51,6 +57,12 @@ public class CustomerService {
             throw new CustomerNotFoundException(id);
         }
         repository.deleteById(id);
+    }
+    private Customer toEntity(CustomerRequest request){
+        return new Customer(request.getUsername(), request.getName(), request.getSurname());
+    }
+    private CustomerResponse toResponse(Customer customer){
+        return new CustomerResponse(customer.getId(), customer.getUsername(), customer.getName(), customer.getSurname());
     }
 
 }

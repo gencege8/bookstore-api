@@ -1,5 +1,7 @@
 package com.ege.bookstore.controller;
 
+import com.ege.bookstore.dto.CustomerRequest;
+import com.ege.bookstore.dto.CustomerResponse;
 import com.ege.bookstore.entity.Customer;
 import com.ege.bookstore.service.CustomerService;
 import jakarta.validation.Valid;
@@ -16,20 +18,20 @@ public class CustomerController {
         this.service=service;
     }
     @GetMapping
-    public List<Customer> getAllCustomers(){
+    public List<CustomerResponse> getAllCustomers(){
         return service.getAllCustomers();
     }
     @GetMapping("/by-username")
-    public Customer getCustomerByUsername(@RequestParam String username){
+    public CustomerResponse getCustomerByUsername(@RequestParam String username){
         return service.getCustomerByUsername(username);
     }
     @GetMapping("/{id}")
-    public Customer getCustomerById(@PathVariable Long id){
+    public CustomerResponse getCustomerById(@PathVariable Long id){
         return service.getCustomerById(id);
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer registerCustomer(@Valid @RequestBody Customer customer){
+    public CustomerResponse registerCustomer(@Valid @RequestBody CustomerRequest customer){
         return service.registerCustomer(customer);
     }
     @DeleteMapping("/{id}")
@@ -39,7 +41,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @Valid @RequestBody Customer customer){
+    public CustomerResponse updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerRequest customer){
         return service.updateCustomer(id, customer);
     }
 
